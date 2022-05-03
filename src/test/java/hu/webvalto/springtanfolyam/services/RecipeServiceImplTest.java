@@ -1,6 +1,7 @@
 package hu.webvalto.springtanfolyam.services;
 
 import hu.webvalto.springtanfolyam.domain.Recipe;
+import hu.webvalto.springtanfolyam.exceptions.NotFoundException;
 import hu.webvalto.springtanfolyam.mappers.RecipeMapper;
 import hu.webvalto.springtanfolyam.repositories.RecipeRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,5 +58,23 @@ class RecipeServiceImplTest {
         //assertEquals(recipeReturned, recipe);
         verify(recipeRepository, times(1)).findById(anyLong());
         verify(recipeRepository, never()).findAll();
+    }
+
+    @Test
+    void testDeleteRecipeById() {
+        Long idToDelete= 2L;
+
+        testObj.deleteRecipeById(idToDelete);
+
+        verify(recipeRepository, times(1)).deleteById(anyLong());
+    }
+
+    @Test
+    public void getRecipeByIdTestNotFound() {
+        Optional<Recipe> recipeOptional = Optional.empty();
+        when(recipeRepository.findById(anyLong())).thenReturn(recipeOptional);
+
+        NotFoundException notFoundException = assertThrows(NotFoundException.class, () -> testObj.findRecipeById(1L));
+        assertEquals("Recipe Not Found!", notFoundException.getMessage());
     }
 }
