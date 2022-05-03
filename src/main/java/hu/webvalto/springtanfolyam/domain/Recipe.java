@@ -1,6 +1,5 @@
 package hu.webvalto.springtanfolyam.domain;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,7 +13,6 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 public class Recipe {
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
