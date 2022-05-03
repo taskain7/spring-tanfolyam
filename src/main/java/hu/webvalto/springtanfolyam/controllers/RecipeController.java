@@ -3,15 +3,20 @@ package hu.webvalto.springtanfolyam.controllers;
 import hu.webvalto.springtanfolyam.dto.RecipeDTO;
 import hu.webvalto.springtanfolyam.services.RecipeService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.validation.Valid;
+
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class RecipeController {
 
     private final RecipeService recipeService;
@@ -30,7 +35,11 @@ public class RecipeController {
 
     @PostMapping
     @RequestMapping("recipe")
-    public String saveOrUpdateRecipe(@ModelAttribute RecipeDTO recipeDTO) {
+    public String saveOrUpdateRecipe(@Valid @ModelAttribute("recipe") RecipeDTO recipeDTO, BindingResult bindingResult) {
+        if(bindingResult.hasErrors()) {
+            bindingResult.getAllErrors().forEach(error -> log.debug(error.toString()));
+            return "recipe/recipeform";
+        }
         RecipeDTO savedRecipeDTO = recipeService.save(recipeDTO);
         return "redirect:/recipe/show/" + savedRecipeDTO.getId();
     }
